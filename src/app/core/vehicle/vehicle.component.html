@@ -1,17 +1,18 @@
 <div class="container-sm d-block" style="border: 2px solid; border-color: red;">
     <button>Limpiar</button>
-
+    <!-- TIPO VEHICULO -->
     <div class="d-flex">
         <p>Tipo de Vehiculo</p>
         <select class="form-select" [(ngModel)]="selectedOptionVehicle" (change)="onSelectionChangeVehicle()"
             name="vehicleType" aria-label="Seleccione el tipo de vehiculo">
-            <!-- <option *ngFor="let year of yearOptions" [value]="year">{{ year }}</option> -->
             <option value="car">Carro</option>
             <option value="motocycle">Moto</option>
             <option value="truck">Camion</option>
 
         </select>
     </div>
+
+    <!-- BRAND -->
 
     <div class="d-flex">
         <p>Marca</p>
@@ -20,30 +21,28 @@
             <option *ngFor="let item of listVehicleBrand" [value]="item.codigo">{{item.nome}}</option>
         </select>
     </div>
+
+    <!-- MODEL -->
     <div class="d-flex">
         <p>Modelo</p>
         <select class="form-select" [(ngModel)]="selectedOptionModel" (change)="onSelectionChangeModel()"
             name="modelType" aria-label="Seleccione modelo">
-            <option value="" disabled selected>Seleccione el tipo de vehiculo</option>
-            <option value="1">Carro</option>
-            <option value="2">Moto</option>
-            <option value="3">Camion</option>
+            <option *ngFor="let item of listVehicleModel" [value]="item.codigo">{{item.nome}}</option>
         </select>
     </div>
+
+    <!-- YEAR -->
     <div class="d-flex">
         <p>Año</p>
         <select class="form-select" [(ngModel)]="selectedOptionYear" (change)="onSelectionChangeYear()" name="yearType"
             aria-label="Seleccione año">
-            <option value="" disabled selected>Seleccione el tipo de vehiculo</option>
-            <option value="1">Carro</option>
-            <option value="2">Moto</option>
-            <option value="3">Camion</option>
+            <option *ngFor="let item of listVehicleYear" [value]="item.codigo">{{item.nome}}</option>
         </select>
     </div>
 
 
     <div class="container" style="border: 2px solid; border-color:aqua;">
-        <p>Marca: KIA</p>
+        <p>Marca: {{listVehicleGeneral.Marca}}</p>
         <p>Modelo: Sportage</p>
         <p>Año: 2023</p>
         <p>Combustible: Gasolina</p>
