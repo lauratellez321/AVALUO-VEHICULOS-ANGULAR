@@ -9,6 +9,7 @@ export const environment = {
       car: 'carros/',
       motocycle: 'motos/',
       truck: 'caminhoes/',
+      none: '',
     },
   },
 };

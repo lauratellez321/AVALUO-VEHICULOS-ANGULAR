@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { VehicleService } from 'src/app/service/vehicle.service';
 
-type typeVehicle = 'car' | 'motocycle' | 'truck';
+type typeVehicle = 'car' | 'motocycle' | 'truck' | 'none';
 
 interface Vehicle {
   TipoVeiculo: number;
@@ -21,6 +21,9 @@ interface Vehicle {
   styleUrls: ['./vehicle.component.scss'],
 })
 export class VehicleComponent implements OnInit {
+  disableSelectBrand = true;
+  disableSelectModel = true;
+  disablSelectYear = true;
   selectedOptionVehicle!: typeVehicle;
   selectedOptionBrand!: string;
   selectedOptionModel!: string;
@@ -29,21 +32,29 @@ export class VehicleComponent implements OnInit {
   listVehicleModel!: any[];
   listVehicleYear!: any[];
   listVehicleGeneral!: Vehicle;
+  listVehicleGeneralVoid = {
+    TipoVeiculo: 0,
+    Valor: '',
+    Marca: '',
+    Modelo: '',
+    AnoModelo: 0,
+    Combustivel: '',
+    CodigoFipe: '',
+    MesReferencia: '',
+    SiglaCombustivel: '',
+  };
+  taxesByFuel = {
+    Gasolina: 0.05,
+    Diesel: 0.025,
+    Electric: 0.01,
+  };
+  valueCop!: number;
+  taxesFull!: number;
 
   constructor(private readonly vehicleService: VehicleService) {}
 
   ngOnInit() {
-    this.listVehicleGeneral = {
-      TipoVeiculo: 0,
-      Valor: '',
-      Marca: '',
-      Modelo: '',
-      AnoModelo: 0,
-      Combustivel: '',
-      CodigoFipe: '',
-      MesReferencia: '',
-      SiglaCombustivel: '',
-    };
+    this.listVehicleGeneral = this.listVehicleGeneralVoid;
   }
 
   getDataVehicle(vehicle: typeVehicle) {
@@ -53,6 +64,7 @@ export class VehicleComponent implements OnInit {
         this.listVehicleBrand.push(value);
       });
     });
+    this.disableSelectBrand = false;
   }
 
   getDataBrandByVehicle(vehicle: typeVehicle, brand: string) {
@@ -64,6 +76,7 @@ export class VehicleComponent implements OnInit {
           this.listVehicleModel = data.modelos;
         }
       });
+    this.disableSelectModel = false;
   }
 
   getDataModelByBrand(vehicle: typeVehicle, brand: string, model: string) {
@@ -75,6 +88,7 @@ export class VehicleComponent implements OnInit {
           this.listVehicleYear.push(value);
         });
       });
+    this.disablSelectYear = false;
   }
 
   getDataGeneralByYear(
@@ -87,7 +101,28 @@ export class VehicleComponent implements OnInit {
       .getValueByModel(vehicle, brand, model, year)
       .subscribe((data: any) => {
         this.listVehicleGeneral = data;
+
+        if (
+          (this.listVehicleGeneral.Combustivel &&
+            this.listVehicleGeneral.Combustivel == 'Gasolina') ||
+          this.listVehicleGeneral.Combustivel == 'Diesel' ||
+          this.listVehicleGeneral.Combustivel == 'Electric'
+        ) {
+          const newValue = this.parseCurrency(this.listVehicleGeneral.Valor);
+          this.valueCop = this.convertRSaCOP(newValue);
+          this.taxesFull = this.getTaxes(
+            this.valueCop,
+            this.listVehicleGeneral.Combustivel
+          );
+          console.log(this.taxesFull);
+        }
       });
+  }
+
+  getTaxes(valor: number, fuel: 'Diesel' | 'Gasolina' | 'Electric'): number {
+    const taxRate = this.taxesByFuel[fuel];
+    const taxAmount = valor * taxRate;
+    return parseFloat(taxAmount.toFixed(2));
   }
 
   onSelectionChangeVehicle() {
@@ -114,5 +149,34 @@ export class VehicleComponent implements OnInit {
       this.selectedOptionModel,
       this.selectedOptionYear
     );
+  }
+
+  clearSelection() {
+    this.selectedOptionVehicle = 'none';
+    this.selectedOptionBrand = '';
+    this.selectedOptionModel = '';
+    this.selectedOptionYear = '';
+    this.listVehicleBrand = [];
+    this.listVehicleModel = [];
+    this.listVehicleYear = [];
+    this.listVehicleGeneral = this.listVehicleGeneralVoid;
+    this.disableSelectModel = true;
+    this.disableSelectBrand = true;
+    this.disablSelectYear = true;
+  }
+
+  convertRSaCOP(rs: number): number {
+    console.log(rs);
+
+    const exchangeRate = 801.44;
+    return rs * exchangeRate;
+  }
+
+  parseCurrency(text: string): number {
+    let numericString = text.replace(/[^0-9.,]/g, '');
+    numericString = numericString.replace(/\./g, '');
+    numericString = numericString.replace(/,/g, '.');
+
+    return parseFloat(numericString);
   }
 }

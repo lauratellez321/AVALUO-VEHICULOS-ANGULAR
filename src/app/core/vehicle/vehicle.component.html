@@ -1,5 +1,5 @@
 <div class="container-sm d-block" style="border: 2px solid; border-color: red;">
-    <button>Limpiar</button>
+    <button (click)="clearSelection()">Limpiar</button>
     <!-- TIPO VEHICULO -->
     <div class="d-flex">
         <p>Tipo de Vehiculo</p>
@@ -17,7 +17,7 @@
     <div class="d-flex">
         <p>Marca</p>
         <select class="form-select" [(ngModel)]="selectedOptionBrand" (change)="onSelectionChangeBrand()"
-            name="marcaType" aria-label="Seleccione marca">
+            name="marcaType" aria-label="Seleccione marca" [disabled]="disableSelectBrand">
             <option *ngFor="let item of listVehicleBrand" [value]="item.codigo">{{item.nome}}</option>
         </select>
     </div>
@@ -26,7 +26,7 @@
     <div class="d-flex">
         <p>Modelo</p>
         <select class="form-select" [(ngModel)]="selectedOptionModel" (change)="onSelectionChangeModel()"
-            name="modelType" aria-label="Seleccione modelo">
+            name="modelType" aria-label="Seleccione modelo" [disabled]="disableSelectModel">
             <option *ngFor="let item of listVehicleModel" [value]="item.codigo">{{item.nome}}</option>
         </select>
     </div>
@@ -35,7 +35,7 @@
     <div class="d-flex">
         <p>Año</p>
         <select class="form-select" [(ngModel)]="selectedOptionYear" (change)="onSelectionChangeYear()" name="yearType"
-            aria-label="Seleccione año">
+            aria-label="Seleccione año" [disabled]="disablSelectYear">
             <option *ngFor="let item of listVehicleYear" [value]="item.codigo">{{item.nome}}</option>
         </select>
     </div>
@@ -43,10 +43,12 @@
 
     <div class="container" style="border: 2px solid; border-color:aqua;">
         <p>Marca: {{listVehicleGeneral.Marca}}</p>
-        <p>Modelo: Sportage</p>
-        <p>Año: 2023</p>
-        <p>Combustible: Gasolina</p>
-        <p>Valor:</p>
-        <p>Impuesto:</p>
+        <p>Modelo: {{listVehicleGeneral.Modelo}}</p>
+        <p>Año: {{listVehicleGeneral.AnoModelo}}</p>
+        <p>Combustible: {{listVehicleGeneral.Combustivel}}</p>
+        <p>Valor: {{listVehicleGeneral.Valor}}</p>
+        <p>Valor COP: {{valueCop || ''}}</p>
+        <p>Impuesto: {{taxesFull || ''}}</p>
     </div>
+
 </div>

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environment/environment';
 
-type typeVehicle = 'car' | 'motocycle' | 'truck';
+type typeVehicle = 'car' | 'motocycle' | 'truck' | 'none';
 
 @Injectable({
   providedIn: 'root',
