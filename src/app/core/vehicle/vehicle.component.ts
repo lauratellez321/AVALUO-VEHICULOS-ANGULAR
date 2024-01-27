@@ -48,6 +48,7 @@ export class VehicleComponent implements OnInit {
     Diesel: 0.025,
     Electric: 0.01,
   };
+  typeFuel = 0;
   valueCop!: number;
   taxesFull!: number;
 
@@ -59,6 +60,10 @@ export class VehicleComponent implements OnInit {
 
   getDataVehicle(vehicle: typeVehicle) {
     this.listVehicleBrand = [];
+    this.selectedOptionBrand = '';
+    this.selectedOptionModel = '';
+    this.selectedOptionYear = '';
+
     this.vehicleService.getVehicle(vehicle).subscribe((data) => {
       Object.values(data).forEach((value) => {
         this.listVehicleBrand.push(value);
@@ -101,7 +106,6 @@ export class VehicleComponent implements OnInit {
       .getValueByModel(vehicle, brand, model, year)
       .subscribe((data: any) => {
         this.listVehicleGeneral = data;
-
         if (
           (this.listVehicleGeneral.Combustivel &&
             this.listVehicleGeneral.Combustivel == 'Gasolina') ||
@@ -110,11 +114,11 @@ export class VehicleComponent implements OnInit {
         ) {
           const newValue = this.parseCurrency(this.listVehicleGeneral.Valor);
           this.valueCop = this.convertRSaCOP(newValue);
+          this.typeFuel = this.taxesByFuel[this.listVehicleGeneral.Combustivel];
           this.taxesFull = this.getTaxes(
             this.valueCop,
             this.listVehicleGeneral.Combustivel
           );
-          console.log(this.taxesFull);
         }
       });
   }
@@ -152,13 +156,13 @@ export class VehicleComponent implements OnInit {
   }
 
   clearSelection() {
+    this.listVehicleBrand = [];
+    this.listVehicleModel = [];
+    this.listVehicleYear = [];
     this.selectedOptionVehicle = 'none';
     this.selectedOptionBrand = '';
     this.selectedOptionModel = '';
     this.selectedOptionYear = '';
-    this.listVehicleBrand = [];
-    this.listVehicleModel = [];
-    this.listVehicleYear = [];
     this.listVehicleGeneral = this.listVehicleGeneralVoid;
     this.disableSelectModel = true;
     this.disableSelectBrand = true;
@@ -166,17 +170,15 @@ export class VehicleComponent implements OnInit {
   }
 
   convertRSaCOP(rs: number): number {
-    console.log(rs);
-
     const exchangeRate = 801.44;
-    return rs * exchangeRate;
+    const value = rs * exchangeRate;
+    return parseFloat(value.toFixed(2));
   }
 
   parseCurrency(text: string): number {
     let numericString = text.replace(/[^0-9.,]/g, '');
     numericString = numericString.replace(/\./g, '');
     numericString = numericString.replace(/,/g, '.');
-
     return parseFloat(numericString);
   }
 }
